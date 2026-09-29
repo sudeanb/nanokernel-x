@@ -58,6 +58,7 @@ static void serial_putc(char c) {
 }
 static void kputc(char c) { vga_putc(c); serial_putc(c); }
 static void kputs(const char *s) { while (*s) kputc(*s++); }
+static void dbg(char c) { outb(0xE9, c); }
 
 /* ---------- GDT + TSS ---------- */
 
@@ -243,12 +244,14 @@ uint32_t irq0_handler_c(uint32_t saved_frame) {
     if (current_task >= 0) tasks[current_task].esp = saved_frame;
 
     int next = sched_pick_next(current_task);
-    if (next < 0) return saved_frame;      /* idle */
+    if (next < 0) { dbg('?'); return saved_frame; }
     current_task = next;
+    dbg('A' + next);
 
     if (next == 3 && !user_started) {
         user_started = 1;
         tss.esp0 = (uint32_t)(tasks[3].kstack + KSTACK_SIZE);
+        dbg('U');
         return (uint32_t)make_user_frame(&tasks[3]);
     }
     if (tasks[next].esp == 0)

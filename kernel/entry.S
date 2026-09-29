@@ -4,7 +4,7 @@
     .align 4
     .long 0x1BADB002                /* magic */
     .long 0x00000003                /* flags: page-align modules + mem info */
-    .long 0x36D65247                /* checksum = -(magic+flags) */
+    .long 0xE4524FFB                /* checksum = -(magic+flags) */
 
 /* NanoKernel-X interrupt entry stubs.
  *

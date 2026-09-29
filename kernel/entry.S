@@ -3,8 +3,13 @@
     .section .mbh, "a"
     .align 4
     .long 0x1BADB002                /* magic */
-    .long 0x00000003                /* flags: page-align modules + mem info */
-    .long 0xE4524FFB                /* checksum = -(magic+flags) */
+    .long 0x00010003                /* flags: AOUT_KLUDGE + page-align + mem-info */
+    .long 0xE43BCFF3                /* checksum */
+    .long 0x8000                    /* header_addr  (.mbh VMA) */
+    .long 0x8000                    /* load_addr    (kernel load base) */
+    .long 0xA0000                   /* load_end_addr (data+user blob end) */
+    .long 0xA0000                   /* bss_end_addr */
+    .long 0x800C                    /* entry_addr (kernel_entry) */
 
 /* NanoKernel-X interrupt entry stubs.
  *

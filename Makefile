@@ -27,8 +27,6 @@ apps/user.o: apps/user.S apps/user.ld
 	@printf '.section .rodata\n.globl user_bin_start\nuser_bin_start:\n.incbin "apps/user.bin"\n.globl user_bin_end\nuser_bin_end:\n' > apps/user_blob.s
 	$(AS) $(ASFLAGS) -c apps/user_blob.s -o $@
 
-kernel/entry.o: boot/mbr.S
-
 kernel.elf: kernel/entry.o kernel/kernel.o apps/user.o linker.ld
 	$(LD) -m elf_i386 -T linker.ld -o $@ kernel/entry.o kernel/kernel.o apps/user.o
 

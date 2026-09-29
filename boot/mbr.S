@@ -59,6 +59,4 @@ gdt_desc:
     .word gdt_desc - gdt - 1
     .long gdt
 
-    /* pad to offset 510, then the boot signature AT 510/511 */
-    . = _start + 510
-    .byte 0x55, 0xAA
+    /* the 0xAA55 signature is placed by the linker (boot/mbr.ld) */

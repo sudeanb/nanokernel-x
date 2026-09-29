@@ -32,9 +32,10 @@ kernel/entry.o: boot/mbr.S
 kernel.elf: kernel/entry.o kernel/kernel.o apps/user.o linker.ld
 	$(LD) -m elf_i386 -T linker.ld -o $@ kernel/entry.o kernel/kernel.o apps/user.o
 
-mbr.bin: boot/mbr.S
-	$(CC) -m16 -ffreestanding -c boot/mbr.S -o mbr.o
-	$(OBJCOPY) -O binary mbr.o $@
+mbr.bin: boot/mbr.S boot/mbr.ld
+	$(AS) --32 -c boot/mbr.S -o mbr.o
+	$(LD) -T boot/mbr.ld -o mbr.elf mbr.o
+	$(OBJCOPY) -O binary mbr.elf $@
 
 kernel.bin: kernel.elf
 	$(OBJCOPY) -O binary kernel.elf kernel.bin

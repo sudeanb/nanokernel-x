@@ -60,11 +60,17 @@ test: host-test
 
 ci-boot: os.img
 	timeout 15 $(QEMU) -m 32M -drive format=raw,file=os.img \
-	  -serial file:serial.out -display none -no-reboot \
+	  -serial file:serial.out -display none -no-reboot -no-shutdown \
+	  -debugcon file:debugcon.out -global isa-debugcon.iobase=0x402 \
 	  -d int,cpu_reset -D qemu.debug || true
-	cat qemu.debug > qemu-debug.log 2>/dev/null || true
-	@grep -E "v=" qemu-debug.log 2>/dev/null | tail -40 || true
-	@grep -c "v=" qemu-debug.log 2>/dev/null || true
+	@echo "=== serial.out ==="
+	@cat serial.out 2>/dev/null || echo "(yok)"
+	@echo "=== serial.out hex ==="
+	@od -c serial.out 2>/dev/null | head -10 || true
+	@echo "=== qemu trace son 60 satır ==="
+	@grep -E "v=|RESET" qemu.debug 2>/dev/null | tail -60 || echo "(trace yok)"
+	@echo "=== seabios debugcon (ilk 40) ==="
+	@head -40 debugcon.out 2>/dev/null || true
 	grep -q "NANOKERNEL-X BOOT OK" serial.out
 	grep -q "SCHED OK" serial.out
 	grep -q "USER OK" serial.out

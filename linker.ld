@@ -12,10 +12,12 @@ SECTIONS
 
     . = 0x8000;
 
+    .mbh : { KEEP(*(.mbh)) }
+
     .text : ALIGN(4)
     {
         /* entry.o is first on the linker command line, so kernel_entry
-         * lands at 0x8000 naturally */
+         * lands right after the header */
         *(.text .text.*)
     }
 

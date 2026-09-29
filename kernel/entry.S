@@ -1,3 +1,11 @@
+/* Multiboot header — QEMU -kernel loads the ELF directly, bypassing
+ * the MBR for the CI boot test. Must be within the first 8 KiB, 4-aligned. */
+    .section .mbh, "a"
+    .align 4
+    .long 0x1BADB002                /* magic */
+    .long 0x00000003                /* flags: page-align modules + mem info */
+    .long 0x36D65247                /* checksum = -(magic+flags) */
+
 /* NanoKernel-X interrupt entry stubs.
  *
  * Contract: every C handler returns the pointer to a "regs frame" to

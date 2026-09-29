@@ -62,6 +62,7 @@ ci-boot: os.img
 	timeout 15 $(QEMU) -m 32M -drive format=raw,file=os.img \
 	  -serial file:serial.out -display none -no-reboot \
 	  -d int,cpu_reset -D qemu.debug || true
+	cat qemu.debug > qemu-debug.log || true
 	grep -q "NANOKERNEL-X BOOT OK" serial.out
 	grep -q "SCHED OK" serial.out
 	grep -q "USER OK" serial.out

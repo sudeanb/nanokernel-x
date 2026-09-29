@@ -34,7 +34,7 @@ kernel.elf: kernel/entry.o kernel/kernel.o apps/user.o linker.ld
 
 mbr.bin: boot/mbr.S boot/mbr.ld
 	$(AS) --32 -c boot/mbr.S -o mbr.o
-	$(LD) -T boot/mbr.ld -o mbr.elf mbr.o
+	$(LD) -m elf_i386 -T boot/mbr.ld -o mbr.elf mbr.o
 	$(OBJCOPY) -O binary mbr.elf $@
 
 kernel.bin: kernel.elf

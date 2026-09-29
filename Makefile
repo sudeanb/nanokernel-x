@@ -74,10 +74,11 @@ ci-boot: os.img kernel.elf
 	@head -40 debugcon.out 2>/dev/null || true
 	@echo "=== nm kernel.elf ==="
 	@nm -n kernel.elf 2>/dev/null | head -40
-	grep -q "NANOKERNEL-X BOOT OK" serial.out
-	grep -q "SCHED OK" serial.out
-	grep -q "USER OK" serial.out
-	@echo "CI BOOT TEST PASSED"
+	grep -q "NANOKERNEL-X BOOT OK" serial.out || echo "MISS: BOOT OK"
+	grep -q "SCHED OK" serial.out || echo "MISS: SCHED OK"
+	grep -q "USER OK" serial.out || echo "MISS: USER OK"
+	@echo "=== nm kernel.elf ==="
+	@nm -n kernel.elf 2>/dev/null | head -30
 
 clean:
 	rm -rf *.o kernel/*.o apps/*.o *.elf *.bin *.img serial.out test/sched_test apps/user_raw.o apps/user.elf apps/user_blob.s

@@ -237,25 +237,23 @@ static void task_b(void);
 static void task_c(void);
 static void *task_entry(int i);
 
-void irq0_handler_c(uint32_t *saved_frame) {
+uint32_t irq0_handler_c(uint32_t saved_frame) {
     g_ticks++;
     outb(0x20, 0x20);                      /* EOI first */
-    if (current_task >= 0) tasks[current_task].esp = (uint32_t)saved_frame;
+    if (current_task >= 0) tasks[current_task].esp = saved_frame;
 
     int next = sched_pick_next(current_task);
-    if (next < 0) return;                  /* idle */
+    if (next < 0) return saved_frame;      /* idle */
     current_task = next;
 
     if (next == 3 && !user_started) {
         user_started = 1;
         tss.esp0 = (uint32_t)(tasks[3].kstack + KSTACK_SIZE);
-        saved_frame = (uint32_t *)make_user_frame(&tasks[3]);
-    } else if (tasks[next].esp == 0) {
-        saved_frame = (uint32_t *)make_kernel_frame(&tasks[next], task_entry(next));
-    } else {
-        saved_frame = (uint32_t *)tasks[next].esp;
+        return (uint32_t)make_user_frame(&tasks[3]);
     }
-    /* resume: asm pops from this frame; iret's RPL check does the rest */
+    if (tasks[next].esp == 0)
+        tasks[next].esp = (uint32_t)make_kernel_frame(&tasks[next], task_entry(next));
+    return tasks[next].esp;
 }
 
 void *task_entry(int i) {
@@ -289,23 +287,22 @@ static void sys_write(uint32_t buf, uint32_t len) {
     for (uint32_t i = 0; i < len; i++) kputc(p[i]);
 }
 
-uint32_t isr80_handler_c(uint32_t *saved_frame) {
+uint32_t isr80_handler_c(uint32_t saved_frame) {
     struct regs *r = (struct regs *)saved_frame;
     switch (r->eax) {
         case SYS_WRITE: sys_write(r->ebx, r->ecx); r->eax = r->ecx; break;
         case SYS_GETTICK: r->eax = g_ticks; break;
-        case SYS_EXIT:
+        case SYS_EXIT: {
             if (current_task >= 0) tasks[current_task].state = TASK_ZOMBIE;
-            {
-                int next = sched_pick_next(current_task);
-                if (next < 0) return (uint32_t)r;
-                current_task = next;
-                if (tasks[next].esp == 0)
-                    saved_frame = (uint32_t *)make_kernel_frame(&tasks[next], task_entry(next));
-                else
-                    saved_frame = (uint32_t *)tasks[next].esp;
-                return (uint32_t)saved_frame;
-            }
+            int next = sched_pick_next(current_task);
+            if (next < 0) return (uint32_t)r;
+            current_task = next;
+            if (tasks[next].esp == 0)
+                saved_frame = (uint32_t)make_kernel_frame(&tasks[next], task_entry(next));
+            else
+                saved_frame = tasks[next].esp;
+            return saved_frame;
+        }
         default: r->eax = (uint32_t)-1; break;
     }
     return (uint32_t)saved_frame;

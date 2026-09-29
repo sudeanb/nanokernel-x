@@ -36,10 +36,13 @@ mbr.bin: boot/mbr.S
 	$(CC) -m16 -ffreestanding -c boot/mbr.S -o mbr.o
 	$(OBJCOPY) -O binary mbr.o $@
 
-os.img: kernel.elf mbr.bin
+kernel.bin: kernel.elf
+	$(OBJCOPY) -O binary kernel.elf kernel.bin
+
+os.img: kernel.bin mbr.bin
 	dd if=/dev/zero of=os.img bs=512 count=64 2>/dev/null
-	dd if=$<.bin of=os.img bs=512 count=1 seek=0 conv=notrunc 2>/dev/null || dd if=mbr.bin of=os.img bs=512 seek=0 conv=notrunc
-	dd if=kernel.elf of=os.img bs=512 seek=1 conv=notrunc 2>/dev/null || dd if=kernel.bin of=os.img bs=512 seek=1 conv=notrunc 2>/dev/null || true
+	dd if=mbr.bin of=os.img bs=512 seek=0 conv=notrunc
+	dd if=kernel.bin of=os.img bs=512 seek=1 conv=notrunc
 	@echo "os.img ready"
 
 compile-check:

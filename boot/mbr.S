@@ -16,7 +16,7 @@ _start:
 
     /* int 13h AH=02: read AL=9 sectors CHS(0,0,2) -> ES:BX = 0000:8000 */
     mov $0x8000, %bx
-    mov $0x02, %al
+    mov $0x20, %al
     mov $0x02, %cl
     mov $0x00, %dh
     mov $0x00, %ch

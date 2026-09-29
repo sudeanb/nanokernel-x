@@ -9,7 +9,8 @@ SECTIONS
 
     .text : ALIGN(4)
     {
-        kernel/entry.o(kernel_entry)
+        /* entry.o is first on the linker command line, so kernel_entry
+         * lands at 0x8000 naturally */
         *(.text .text.*)
     }
 

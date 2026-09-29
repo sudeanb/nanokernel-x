@@ -59,13 +59,13 @@ test: host-test
 
 ci-boot: os.img
 	timeout 15 $(QEMU) -m 32M -drive format=raw,file=os.img \
-	  -serial file:serial.out -display none -no-reboot -no-shutdown \
+	  -serial stdio -display none -no-reboot -no-shutdown \
 	  -debugcon file:debugcon.out -global isa-debugcon.iobase=0x402 \
 	  -d int,cpu_reset -D qemu.debug || true
 	@echo "=== serial.out ==="
-	@cat serial.out 2>/dev/null || echo "(yok)"
+	@echo "(serial stdio yukarida)"
 	@echo "=== serial.out hex ==="
-	@od -c serial.out 2>/dev/null | head -10 || true
+	
 	@echo "=== qemu trace son 60 satır ==="
 	@grep -E "v=|RESET" qemu.debug 2>/dev/null | tail -60 || echo "(trace yok)"
 	@echo "=== seabios debugcon (ilk 40) ==="

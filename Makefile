@@ -57,8 +57,8 @@ test/sched_test: test/sched_test.c kernel/sched.c include/nk.h
 
 test: host-test
 
-ci-boot: os.img kernel.elf
-	timeout 15 $(QEMU) -m 32M -kernel kernel.elf \
+ci-boot: os.img
+	timeout 15 $(QEMU) -m 32M -drive format=raw,file=os.img \
 	  -serial file:serial.out -display none -no-reboot -no-shutdown \
 	  -debugcon file:debugcon.out -global isa-debugcon.iobase=0x402 \
 	  -d int,cpu_reset -D qemu.debug || true

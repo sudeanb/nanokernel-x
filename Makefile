@@ -10,7 +10,7 @@ QEMU    ?= qemu-system-i386
 
 CFLAGS  = -m32 -ffreestanding -fno-pic -fno-pie -fno-stack-protector \
           -nostdlib -O2 -Wall -Wextra -mno-80387 -Iinclude
-ASFLAGS = -m32
+ASFLAGS = --32
 
 all: os.img
 

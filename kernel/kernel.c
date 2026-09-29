@@ -344,6 +344,7 @@ static void copy_user(void) {
 
 void kmain(void) {
     serial_init();
+    kputc('2');                 /* kmain reached */
     kputs("\n[NANOKERNEL-X BOOT OK]\n");
 
     gdt_init();

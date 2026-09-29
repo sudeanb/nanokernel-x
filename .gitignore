@@ -1,0 +1,15 @@
+node_modules/
+*.log
+.DS_Store
+*.o
+*.elf
+*.bin
+os.img
+serial.out
+mbr.o
+kernel/*.o
+apps/*.o
+apps/user_raw.o
+apps/user.elf
+apps/user_blob.s
+test/sched_test

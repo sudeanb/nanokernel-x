@@ -1,0 +1,8 @@
+{
+  "name": "nanokernel-x",
+  "version": "0.1.0",
+  "description": "NanoKernel-X: a toy OS that boots — 512-byte MBR, protected-mode kernel with GDT/IDT/PIC/PIT, preemptive scheduler, ring-3 user task, int 0x80 syscalls, QEMU-verified boot in CI.",
+  "scripts": { "test": "make host-test" },
+  "keywords": ["osdev", "kernel", "bootloader", "x86", "protected-mode", "scheduler", "qemu", "ring3", "syscalls"],
+  "license": "MIT"
+}

@@ -5,6 +5,11 @@ ENTRY(kernel_entry)
 
 SECTIONS
 {
+    /* Ubuntu's ld injects a .note.gnu.build-id by default; at a fixed
+     * 0x8000 load address that note would sit BEFORE the entry point and
+     * the MBR would jump into data. */
+    /DISCARD/ : { *(.note) *(.note.*) *(.comment) }
+
     . = 0x8000;
 
     .text : ALIGN(4)

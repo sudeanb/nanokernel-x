@@ -55,6 +55,7 @@ host-test: test/sched_test
 
 test/sched_test: test/sched_test.c kernel/sched.c include/nk.h
 	cc -O1 -Iinclude -o $@ test/sched_test.c kernel/sched.c
+	chmod +x $@
 
 test: host-test
 
